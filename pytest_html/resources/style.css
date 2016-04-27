@@ -1,8 +1,8 @@
 body {
 	font-family: Helvetica, Arial, sans-serif;
-	font-size: 12px;
+	font-size: 16px;
 	min-width: 1200px;
-	color: #999;
+	color: black;
 }
 h2 {
 	font-size: 16px;
@@ -14,7 +14,7 @@ p {
 }
 
 a {
-	color: #999;
+	color: black;
 }
 
 table {
@@ -38,13 +38,13 @@ table {
  * TEST RESULT COLORS
  ******************************/
 span.passed, .passed .col-result {
-	color: green;
+	color: DarkGreen;
 }
 span.skipped, span.xfailed, .skipped .col-result, .xfailed .col-result {
-	color: orange;
+	color: DarkOrange;
 }
 span.error, span.failed, span.xpassed, .failed .col-result, .xpassed .col-result  {
-	color: red;
+	color: DarkRed;
 }
 .col-index {
     width: 4%;
@@ -66,7 +66,7 @@ span.error, span.failed, span.xpassed, .failed .col-result, .xpassed .col-result
 
 #results-table {
 	border: 1px solid #e6e6e6;
-	color: #999;
+	color: black;
 	font-size: 12px;
 	width: 100%
 }
