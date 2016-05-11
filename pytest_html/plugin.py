@@ -4,7 +4,7 @@
 
 from __future__ import absolute_import
 
-from base64 import b64encode
+from base64 import b64encode, urlsafe_b64encode
 import datetime
 import json
 import os
@@ -74,6 +74,15 @@ def data_uri(content, mime_type='text/plain', charset='utf-8'):
         data = b64encode(content)
     return 'data:{0};charset={1};base64,{2}'.format(mime_type, charset, data)
 
+def crc16_ccitt(crc, data):
+    msb = crc >> 8
+    lsb = crc & 255
+    for c in data:
+        x = ord(c) ^ msb
+        x ^= (x >> 4)
+        msb = (lsb ^ (x >> 3) ^ (x << 4)) & 255
+        lsb = (x ^ (x << 5)) & 255
+    return (msb << 8) + lsb
 
 class HTMLReport(object):
 
@@ -141,7 +150,8 @@ class HTMLReport(object):
                     log.append(html.br())
             additional_html.append(log)
 
-        hsh = hashlib.md5(report.nodeid).digest().encode('base64')[:4]
+        hsh = urlsafe_b64encode(crc16_ccitt(0x1021,report.nodeid).to_bytes(2,byteorder='big')).split(b"=")[0].decode('utf-8')
+
         self.test_logs.append(html.tr([
             html.td(hsh, class_='col-shortid'),
             html.td(result, class_='col-result'),
@@ -229,7 +239,7 @@ class HTMLReport(object):
 
         results = [html.h2('Results'), html.table([html.thead(
             html.tr([
-                html.th('ID', class_='sortable numeric',col='shortid'),
+                html.th('ID', class_='sortable',col='shortid'),
                 html.th('Result',
                         class_='sortable result',
                         col='result'),
