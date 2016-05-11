@@ -27,8 +27,6 @@ else:
     from codecs import open
     from cgi import escape
 
-index = 0
-
 @pytest.fixture(scope='session', autouse=True)
 def environment(request):
     """Provide environment details for HTML report"""
@@ -143,10 +141,9 @@ class HTMLReport(object):
                     log.append(html.br())
             additional_html.append(log)
 
-        global index
-        index += 1
+        hsh = hashlib.md5(report.nodeid).digest().encode('base64')[:4]
         self.test_logs.append(html.tr([
-            html.td(index, class_='col-index'),
+            html.td(hsh, class_='col-shortid'),
             html.td(result, class_='col-result'),
             html.td(report.nodeid, class_='col-name'),
             html.td('{0:.2f}'.format(time), class_='col-duration'),
@@ -232,7 +229,7 @@ class HTMLReport(object):
 
         results = [html.h2('Results'), html.table([html.thead(
             html.tr([
-                html.th('Nr', class_='sortable initial-sort numeric',col='index'),
+                html.th('ID', class_='sortable initial-sort numeric',col='shortid'),
                 html.th('Result',
                         class_='sortable result',
                         col='result'),
