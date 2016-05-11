@@ -229,7 +229,7 @@ class HTMLReport(object):
 
         results = [html.h2('Results'), html.table([html.thead(
             html.tr([
-                html.th('ID', class_='sortable initial-sort numeric',col='shortid'),
+                html.th('ID', class_='sortable numeric',col='shortid'),
                 html.th('Result',
                         class_='sortable result',
                         col='result'),
