@@ -87,8 +87,7 @@ def crc16_ccitt(crc, data):
 class HTMLReport(object):
 
     def __init__(self, logfile):
-        logfile = os.path.expanduser(os.path.expandvars(logfile))
-        self.logfile = os.path.abspath(logfile)
+        self.logfile = logfile
         self.test_logs = []
         self.errors = self.failed = 0
         self.passed = self.skipped = 0
@@ -201,9 +200,6 @@ class HTMLReport(object):
         self.suite_start_time = time.time()
 
     def pytest_sessionfinish(self, session):
-        if not os.path.exists(os.path.dirname(self.logfile)):
-            os.makedirs(os.path.dirname(self.logfile))
-        logfile = open(self.logfile, 'w', encoding='utf-8')
         suite_stop_time = time.time()
         suite_time_delta = suite_stop_time - self.suite_start_time
         numtests = self.passed + self.failed + self.xpassed + self.xfailed
@@ -274,6 +270,14 @@ class HTMLReport(object):
 
         doc = html.html(head, body)
 
+        if callable(self.logfile):
+            self.logfile = self.logfile(self)
+        logfilename = os.path.expanduser(os.path.expandvars(self.logfile))
+        logfilename = os.path.abspath(logfilename)
+        self.logfile = logfilename
+        if not os.path.exists(os.path.dirname(logfilename)):
+            os.makedirs(os.path.dirname(logfilename))
+        logfile = open(logfilename, 'w', encoding='utf-8')
         logfile.write('<!DOCTYPE html>')
         unicode_doc = doc.unicode(indent=2)
         if PY3:
