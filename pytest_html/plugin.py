@@ -89,7 +89,7 @@ def crc16_ccitt(crc, data):
 
 class HTMLReport(object):
 
-    def __init__(self, logfile):
+    def __init__(self, logfile,reportskipped):
         self.logfile = logfile
         self.test_logs = []
         self.errors = self.failed = 0
