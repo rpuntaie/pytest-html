@@ -40,14 +40,17 @@ def pytest_addoption(parser):
     group.addoption('--html', action='store', dest='htmlpath',
                     metavar='path', default=None,
                     help='create html report file at given path.')
+    group.addoption('--reportskipped', action='store_true', dest='reportskipped',
+                    default=False, help='report skipped tests.')
 
 
 def pytest_configure(config):
     config._environment = []
     htmlpath = config.option.htmlpath
+    reportskipped = config.option.reportskipped
     # prevent opening htmlpath on slave nodes (xdist)
     if htmlpath and not hasattr(config, 'slaveinput'):
-        config._html = HTMLReport(htmlpath)
+        config._html = HTMLReport(htmlpath,reportskipped)
         config.pluginmanager.register(config._html)
     if hasattr(config, 'slaveoutput'):
         config.slaveoutput['environment'] = config._environment
@@ -92,6 +95,7 @@ class HTMLReport(object):
         self.errors = self.failed = 0
         self.passed = self.skipped = 0
         self.xfailed = self.xpassed = 0
+        self.reportskipped = reportskipped
 
     def _appendrow(self, result, report):
         time = getattr(report, 'duration', 0.0)
@@ -193,7 +197,7 @@ class HTMLReport(object):
                 self.append_error(report)
             else:
                 self.append_failure(report)
-        elif report.skipped:
+        elif report.skipped and self.reportskipped:
             self.append_skipped(report)
 
     def pytest_sessionstart(self, session):
